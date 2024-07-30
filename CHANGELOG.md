@@ -1,13 +1,5 @@
-# [unreleased](https://github.com/author/my-package/releases/tags/)
-## Added
+# Basic Resume Changelog
 
-## Removed
+## [v0.1.0](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.1.0)
 
-## Changed
-
-## Migration Guide from v0.1.X
-
----
-
-# [v0.1.0](https://github.com/author/my-package/releases/tags/v0.1.0)
 Initial Release

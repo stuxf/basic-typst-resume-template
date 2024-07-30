@@ -1,64 +1,73 @@
-# The `my-package` Package
+# Basic Resume
+
 <div align="center">Version 0.1.0</div>
 
-A short description about the project and/or client.
+This is a template for a simple resume. It is intended to be used as a good starting point for quickly crafting a standard resume that will properly be parsed by ATS systems. Inspiration is taken from [Jake's Resume](https://github.com/jakegut/resume) and [guided-resume-starter-cgc](https://typst.app/universe/package/guided-resume-starter-cgc/). I'm currently a college student and was unable to find a Typst resume template that fit my needs, so I wrote my own. I hope this template can be useful to others as well.
 
-## Template adaptation checklist
+## Sample Resume
 
-- [ ] Fill out `README.md`
-  - Change the `my-package` package name, including code snippets
-  - Check section contents and/or delete sections that don't apply
-- [ ] Check and/or replace `LICENSE` by something that suits your needs
-- [ ] Fill out `typst.toml`
-  - See also the [typst/packages README](https://github.com/typst/packages/?tab=readme-ov-file#package-format)
-- [ ] Adapt Repository URLs in `CHANGELOG.md`
-  - Consider only committing that file with your first release, or removing the "Initial Release" part in the beginning
-- [ ] Adapt or deactivate the release workflow in `.github/workflows/release.yml`
-  - to deactivate it, delete that file or remove/comment out lines 2-4 (`on:` and following)
-  - to use the workflow
-    - [ ] check the values under `env:`, particularly `REGISTRY_REPO`
-    - [ ] if you don't have one, [create a fine-grained personal access token](https://github.com/settings/tokens?type=beta) with [only Contents permission](https://stackoverflow.com/a/75116350/371191) for the `REGISTRY_REPO`
-    - [ ] on this repo, create a secret `REGISTRY_TOKEN` (at `https://github.com/[user]/[repo]/settings/secrets/actions`) that contains the so created token
+![example resume](./example_resume.png)
 
-    if configured correctly, whenever you create a tag `v...`, your package will be pushed onto a branch on the `REGISTRY_REPO`, from which you can then create a pull request against [typst/packages](https://github.com/typst/packages/)
-- [ ] remove/replace the example test case
-- [ ] (add your actual code, docs and tests)
-- [ ] remove this section from the README
+## Quick Start
 
-## Getting Started
+A barebones resume looks like this, which you can use to get started.
 
-These instructions will get you a copy of the project up and running on the typst web app. Perhaps a short code example on importing the package and a very simple teaser usage.
+```typst
+#import "@preview/basic-resume:0.1.0": *
 
-```typ
-#import "@preview/my-package:0.1.0": *
+// Put your personal information here, replacing mine
+#let name = "Stephen Xu"
+#let location = "San Diego, CA"
+#let email = "stxu@hmc.edu"
+#let github = "github.com/stuxf"
+#let linkedin = "linkedin.com/in/stuxf"
+#let phone = "+1 (xxx) xxx-xxxx"
+#let personal_site = "stuxf.dev"
 
-#show: my-show-rule.with()
-#my-func()
+#show: resume.with(
+  author: name,
+  location: location,
+  email: email,
+  github: github,
+  linkedin: linkedin,
+  phone: phone,
+  personal_site: personal_site,
+  // Accent color is optional. Feel free to remove the next line if you want your resume to be in black and white
+  accent_color: "#26428b",
+)
+
+/*
+* Lines that start with == are formatted into section headings
+* You can use the specific formatting functions if needed
+* The following formatting functions are listed below
+* #edu(dates: "", degree: "", gpa: "", institution: "", location: "")
+* #work(company: "", dates: "", location: "", title: "")
+* #project(dates: "", name: "", role: "", url: "")
+* #extracurriculars(activity: "", dates: "")
+* There are also the following generic functions that don't apply any formatting
+* #generic_two_by_two(top_left: "", top_right: "", bottom_left: "", bottom_right: "")
+* #generic_one_by_two(left: "", right: "")
+*/
+== Education
+
+#edu(
+  institution: "Harvey Mudd College",
+  location: "Claremont, CA",
+  dates: dates_helper(start_date: "Aug 2023", end_date: "May 2027"),
+  degree: "Bachelor's of Science, Computer Science and Mathematics",
+)
+- Cumulative GPA: 4.0\/4.0 | Dean's List, Harvey S. Mudd Merit Scholarship, National Merit Scholarship
+- Relevant Coursework: Data Structures, Program Development, Microprocessors, Abstract Algebra I: Groups and Rings, Linear Algebra, Discrete Mathematics, Multivariable & Single Variable Calculus, Principles and Practice of Comp Sci
+
+== Work Experience
+
+#work(
+  title: "Subatomic Shepherd and Caffeine Connoisseur",
+  location: "Atomville, CA",
+  company: "Microscopic Circus, Schrodinger's University",
+  dates: dates_helper(start_date: "May 2024", end_date: "Present"),
+)
+- more bullet points go here
+
+// ... more headers and stuff below
 ```
-
-### Installation
-
-A step by step guide that will tell you how to get the development environment up and running. This should example how to clone the repo and where to (maybe a link to the typst documentation on it), along with any pre-requisite software and installation steps.
-
-```
-$ First step
-$ Another step
-$ Final step
-```
-
-## Usage
-
-A more in-depth description of usage. Any template arguments? A complicated example that showcases most if not all of the functions the package provides? This is also an excellent place to signpost the manual.
-
-```typ
-#import "@preview/my-package:0.1.0": *
-
-#let my-complicated-example = ...
-```
-
-## Additional Documentation and Acknowledgments
-
-* Project folder on server:
-* Confluence link:
-* Asana board:
-* etc...
