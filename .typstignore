@@ -15,5 +15,5 @@ Justfile
 docs/*
 !docs/*.pdf
 
-example_resume.pdf
-example_resume.png
+example-resume.pdf
+example-resume.png
