@@ -67,19 +67,27 @@
     top: 0.25em,
     align(left)[
       #(
-        // Phone Number
-        phone,
-        // Location
-        location,
-        // Email
-        link("mailto:" + email)[#email],
-        // Github
-        link("https://" + github)[#github],
-        // Linkedin
-        link("https://" + linkedin)[#linkedin],
-        // Personal Site
-        link("https://" + personal-site)[#personal-site],
-      ).join("  |  ")
+        (
+          if phone != "" {
+            phone
+          },
+          if location != "" {
+            location
+          },
+          if email != "" {
+            link("mailto:" + email)[#email]
+          },
+          if github != "" {
+            link("https://" + github)[#github]
+          },
+          if linkedin != "" {
+            link("https://" + linkedin)[#linkedin]
+          },
+          if personal-site != "" {
+            link("https://" + personal-site)[#personal-site]
+          },
+        ).filter(x => x != none).join("  |  ")
+      )
     ],
   )
 
