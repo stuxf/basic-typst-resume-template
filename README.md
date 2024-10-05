@@ -26,13 +26,15 @@ A barebones resume looks like this, which you can use to get started.
 
 #show: resume.with(
   author: name,
+  // All the lines below are optional. 
+  // For example, if you want to to hide your phone number:
+  // feel free to comment those lines out and they will not show.
   location: location,
   email: email,
   github: github,
   linkedin: linkedin,
   phone: phone,
   personal-site: personal-site,
-  // Accent color is optional. Feel free to remove the next line if you want your resume to be in black and white
   accent-color: "#26428b",
 )
 
