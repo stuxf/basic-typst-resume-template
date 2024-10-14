@@ -7,6 +7,7 @@
   phone: "",
   personal-site: "",
   accent-color: "#000000",
+  font: "New Computer Modern",
   body,
 ) = {
 
@@ -16,7 +17,7 @@
   // Document-wide formatting, including font and margins
   set text(
     // LaTeX style font
-    font: "New Computer Modern",
+    font: font,
     size: 10pt,
     lang: "en",
     // Disable ligatures so ATS systems do not get confused when parsing fonts.

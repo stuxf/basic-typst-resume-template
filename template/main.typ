@@ -1,4 +1,4 @@
-#import "@preview/basic-resume:0.1.0": *
+#import "@preview/basic-resume:0.1.3": *
 
 // Put your personal information here, replacing mine
 #let name = "Stephen Xu"
@@ -21,6 +21,7 @@
   phone: phone,
   personal-site: personal-site,
   accent-color: "#26428b",
+  font: "New Computer Modern",
 )
 
 /*

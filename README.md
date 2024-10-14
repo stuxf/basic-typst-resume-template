@@ -1,6 +1,6 @@
 # Basic Resume
 
-<div align="center">Version 0.1.2</div>
+<div align="center">Version 0.1.3</div>
 
 This is a template for a simple resume. It is intended to be used as a good starting point for quickly crafting a standard resume that will properly be parsed by ATS systems. Inspiration is taken from [Jake's Resume](https://github.com/jakegut/resume) and [guided-resume-starter-cgc](https://typst.app/universe/package/guided-resume-starter-cgc/). I'm currently a college student and was unable to find a Typst resume template that fit my needs, so I wrote my own. I hope this template can be useful to others as well.
 
@@ -13,7 +13,7 @@ This is a template for a simple resume. It is intended to be used as a good star
 A barebones resume looks like this, which you can use to get started.
 
 ```typst
-#import "@preview/basic-resume:0.1.0": *
+#import "@preview/basic-resume:0.1.3": *
 
 // Put your personal information here, replacing mine
 #let name = "Stephen Xu"
@@ -36,6 +36,7 @@ A barebones resume looks like this, which you can use to get started.
   phone: phone,
   personal-site: personal-site,
   accent-color: "#26428b",
+  font: "New Computer Modern",
 )
 
 /*
