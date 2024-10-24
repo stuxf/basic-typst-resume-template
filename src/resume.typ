@@ -174,6 +174,17 @@
   ]
 }
 
+#let certificates(
+  name: "",
+  issuer: "",
+  url: "",
+  date: "",
+) = {
+  pad[
+    *#name*, #issuer (#link("https://" + url)[#url]) #h(1fr) #date
+  ]
+}
+
 #let extracurriculars(
   activity: "",
   dates: "",
