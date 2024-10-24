@@ -1,5 +1,6 @@
 #let resume(
   author: "",
+  pronouns: "",
   location: "",
   email: "",
   github: "",
@@ -69,6 +70,9 @@
     align(left)[
       #(
         (
+          if pronouns != "" {
+            pronouns
+          },
           if phone != "" {
             phone
           },
