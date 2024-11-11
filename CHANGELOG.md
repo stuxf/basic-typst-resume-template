@@ -1,5 +1,9 @@
 # Basic Resume Changelog
 
+## [v0.1.4](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.1.2)
+
+Make more resume fields optional (links in projects and certs)
+
 ## [v0.1.3](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.1.2)
 
 Allow for changing of fonts via initial configuration
