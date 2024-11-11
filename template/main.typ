@@ -1,4 +1,4 @@
-#import "@preview/basic-resume:0.1.3": *
+#import "@preview/basic-resume:0.1.4": *
 
 // Put your personal information here, replacing mine
 #let name = "Stephen Xu"
@@ -11,7 +11,7 @@
 
 #show: resume.with(
   author: name,
-  // All the lines below are optional. 
+  // All the lines below are optional.
   // For example, if you want to to hide your phone number:
   // feel free to comment those lines out and they will not show.
   location: location,
@@ -31,6 +31,7 @@
 * #edu(dates: "", degree: "", gpa: "", institution: "", location: "")
 * #work(company: "", dates: "", location: "", title: "")
 * #project(dates: "", name: "", role: "", url: "")
+* certificates(name: "", issuer: "", url: "", date: "")
 * #extracurriculars(activity: "", dates: "")
 * There are also the following generic functions that don't apply any formatting
 * #generic-two-by-two(top-left: "", top-right: "", bottom-left: "", bottom-right: "")
@@ -96,6 +97,7 @@
   role: "Maintainer",
   name: "Hyperschedule",
   dates: dates-helper(start-date: "Nov 2023", end-date: "Present"),
+  // URL is optional
   url: "hyperschedule.io",
 )
 - Maintain open-source scheduler used by 7000+ users at the Claremont Consortium with TypesScript, React and MongoDB
@@ -119,6 +121,12 @@
 // )
 // - Volunteer and write tests for tournaments, including LA Regionals and SoCal State \@ Caltech
 
+// #certificates(
+//   name: "OSCP",
+//   issuer: "Offensive Security",
+//   // url: "",
+//   date: "Oct 2024",
+// )
 == Skills and Awards
 - *Programming Languages*: JavaScript, Python, C/C++, HTML/CSS, Java, Bash, R, Flutter, Dart
 - *Technologies*: React, Astro, Svelte, Tailwind CSS, Git, UNIX, Docker, Caddy, NGINX, Google Cloud Platform

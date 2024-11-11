@@ -170,7 +170,11 @@
   dates: "",
 ) = {
   pad[
-    *#role*, #name (#link("https://" + url)[#url]) #h(1fr) #dates
+    *#role*, #name
+    #if url != "" {
+      [ (#link("https://" + url)[#url])]
+    }
+    #h(1fr) #dates
   ]
 }
 
@@ -181,7 +185,11 @@
   date: "",
 ) = {
   pad[
-    *#name*, #issuer (#link("https://" + url)[#url]) #h(1fr) #date
+    *#name*, #issuer
+    #if url != "" {
+      [ (#link("https://" + url)[#url])]
+    }
+    #h(1fr) #date
   ]
 }
 
