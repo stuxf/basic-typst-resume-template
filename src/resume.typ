@@ -31,9 +31,6 @@
     "us-letter",
   )
 
-  // Smaller paragraph spacing is nice
-  set par(spacing: .65em)
-
   // Link styles
   show link: underline
 
@@ -60,7 +57,7 @@
       weight: 700,
       size: 20pt,
     )
-    #it.body
+    #pad(it.body)
   ]
 
   // Level 1 Heading
@@ -111,7 +108,7 @@
   bottom-left: "",
   bottom-right: "",
 ) = {
-  pad[
+  [
     #top-left #h(1fr) #top-right \
     #bottom-left #h(1fr) #bottom-right
   ]
@@ -122,7 +119,7 @@
   left: "",
   right: "",
 ) = {
-  pad[
+  [
     #left #h(1fr) #right
   ]
 }
@@ -171,7 +168,7 @@
   url: "",
   dates: "",
 ) = {
-  pad[
+  [
     *#role*, #name
     #if url != "" {
       [ (#link("https://" + url)[#url])]
@@ -186,7 +183,7 @@
   url: "",
   date: "",
 ) = {
-  pad[
+  [
     *#name*, #issuer
     #if url != "" {
       [ (#link("https://" + url)[#url])]
