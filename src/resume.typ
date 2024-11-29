@@ -31,6 +31,8 @@
     "us-letter",
   )
 
+  // Smaller paragraph spacing is nice
+  set par(spacing: .65em)
 
   // Link styles
   show link: underline
