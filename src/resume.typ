@@ -63,35 +63,33 @@
   // Level 1 Heading
   [= #(author)]
 
+  // Personal Info Helper
+  let contact-item(value, prefix: "", link-type: "") = {
+    if value != "" {
+      if link-type != "" {
+        link(link-type + value)[#value]
+      } else {
+        value
+      }
+    }
+  }
+
   // Personal Info
   pad(
     top: 0.25em,
     align(left)[
-      #(
-        (
-          if pronouns != "" {
-            pronouns
-          },
-          if phone != "" {
-            phone
-          },
-          if location != "" {
-            location
-          },
-          if email != "" {
-            link("mailto:" + email)[#email]
-          },
-          if github != "" {
-            link("https://" + github)[#github]
-          },
-          if linkedin != "" {
-            link("https://" + linkedin)[#linkedin]
-          },
-          if personal-site != "" {
-            link("https://" + personal-site)[#personal-site]
-          },
-        ).filter(x => x != none).join("  |  ")
-      )
+      #{
+        let items = (
+          contact-item(pronouns),
+          contact-item(phone),
+          contact-item(location),
+          contact-item(email, link-type: "mailto:"),
+          contact-item(github, link-type: "https://"),
+          contact-item(linkedin, link-type: "https://"),
+          contact-item(personal-site, link-type: "https://"),
+        )
+        items.filter(x => x != none).join("  |  ")
+      }
     ],
   )
 
