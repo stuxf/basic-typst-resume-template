@@ -1,4 +1,4 @@
-#import "@preview/basic-resume:0.1.4": *
+#import "@preview/basic-resume:0.2.0": *
 
 // Put your personal information here, replacing mine
 #let name = "Stephen Xu"
@@ -50,7 +50,6 @@
 
 == Work Experience
 
-
 #work(
   title: "Subatomic Shepherd and Caffeine Connoisseur",
   location: "Atomville, CA",
@@ -94,13 +93,15 @@
 == Projects
 
 #project(
-  role: "Maintainer",
   name: "Hyperschedule",
+  // Role is optional
+  role: "Maintainer",
+  // Dates is optional
   dates: dates-helper(start-date: "Nov 2023", end-date: "Present"),
-  // URL is optional
+  // URL is also optional
   url: "hyperschedule.io",
 )
-- Maintain open-source scheduler used by 7000+ users at the Claremont Consortium with TypesScript, React and MongoDB
+- Maintain open-source scheduler used by 7000+ users at the Claremont Consortium with TypeScript, React and MongoDB
   - Manage PR reviews, bug fixes, and coordinate with college for releasing scheduling data and over \$1500 of yearly funding
 - Ensure 99.99% uptime during peak loads of 1M daily requests during course registration through redundant servers
 
@@ -127,8 +128,6 @@
 //   // url: "",
 //   date: "Oct 2024",
 // )
-== Skills and Awards
+== Skills
 - *Programming Languages*: JavaScript, Python, C/C++, HTML/CSS, Java, Bash, R, Flutter, Dart
 - *Technologies*: React, Astro, Svelte, Tailwind CSS, Git, UNIX, Docker, Caddy, NGINX, Google Cloud Platform
-- *Awards*: 1st CorCTF 2024 (\$1337), 3rd PicoCTF 2023 (\$1000), 1st BCACTF 2023 (\$500)
-- *Interests*: Classical Literature, Creative Writing, Tetris
