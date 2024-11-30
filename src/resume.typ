@@ -1,3 +1,5 @@
+#import "@preview/scienceicons:0.0.6": orcid-icon
+
 #let resume(
   author: "",
   pronouns: "",
@@ -7,6 +9,7 @@
   linkedin: "",
   phone: "",
   personal-site: "",
+  orcid: "",
   accent-color: "#000000",
   font: "New Computer Modern",
   body,
@@ -67,7 +70,7 @@
   let contact-item(value, prefix: "", link-type: "") = {
     if value != "" {
       if link-type != "" {
-        link(link-type + value)[#value]
+        link(link-type + value)[#(prefix + value)]
       } else {
         value
       }
@@ -87,6 +90,7 @@
           contact-item(github, link-type: "https://"),
           contact-item(linkedin, link-type: "https://"),
           contact-item(personal-site, link-type: "https://"),
+          contact-item(orcid, prefix:[#orcid-icon(color: rgb("#AECD54"))orcid.org/], link-type: "https://orcid.org/"),
         )
         items.filter(x => x != none).join("  |  ")
       }
