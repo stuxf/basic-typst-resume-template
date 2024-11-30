@@ -9,6 +9,7 @@
   linkedin: "",
   phone: "",
   personal-site: "",
+  orcid: "",
   accent-color: "#000000",
   font: "New Computer Modern",
   body,
