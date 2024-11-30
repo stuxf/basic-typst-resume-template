@@ -1,5 +1,9 @@
 # Basic Resume Changelog
 
+## [v0.2.1](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.1)
+
+Support orcid as a social link. Also fix contact-item's prefix argument.
+
 ## [v0.2.0](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.0)
 
 Modify to work with Typst version 0.12. Also extend projects function to be more robust.

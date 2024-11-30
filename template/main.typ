@@ -1,4 +1,4 @@
-#import "@preview/basic-resume:0.2.0": *
+#import "@preview/basic-resume:0.2.1": *
 
 // Put your personal information here, replacing mine
 #let name = "Stephen Xu"
