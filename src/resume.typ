@@ -67,7 +67,7 @@
   let contact-item(value, prefix: "", link-type: "") = {
     if value != "" {
       if link-type != "" {
-        link(link-type + value)[#value]
+        link(link-type + value)[#(prefix + value)]
       } else {
         value
       }
