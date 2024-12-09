@@ -12,6 +12,7 @@
   orcid: "",
   accent-color: "#000000",
   font: "New Computer Modern",
+  paper: "us-letter",
   body,
 ) = {
 
@@ -31,7 +32,7 @@
   // Reccomended to have 0.5in margin on all sides
   set page(
     margin: (0.5in),
-    "us-letter",
+    paper: paper,
   )
 
   // Link styles
