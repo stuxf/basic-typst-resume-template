@@ -1,5 +1,9 @@
 # Basic Resume Changelog
 
+## [v0.2.1](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.2)
+
+Allow changing of page sizes from us-letter to other sizes, such as A4, for Non-US folks
+
 ## [v0.2.1](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.1)
 
 Support orcid as a social link. Also fix contact-item's prefix argument.
