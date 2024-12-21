@@ -2,6 +2,8 @@
 
 #let resume(
   author: "",
+  author-position: left,
+  personal-info-position: left,
   pronouns: "",
   location: "",
   email: "",
@@ -56,7 +58,7 @@
 
   // Name will be aligned left, bold and big
   show heading.where(level: 1): it => [
-    #set align(left)
+    #set align(author-position)
     #set text(
       weight: 700,
       size: 20pt,
@@ -81,7 +83,7 @@
   // Personal Info
   pad(
     top: 0.25em,
-    align(left)[
+    align(personal-info-position)[
       #{
         let items = (
           contact-item(pronouns),
