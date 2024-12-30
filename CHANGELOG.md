@@ -1,6 +1,10 @@
 # Basic Resume Changelog
 
-## [v0.2.1](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.2)
+## [v0.2.3](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.3)
+
+User can set posistion of author and personal info.
+
+## [v0.2.2](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.2)
 
 Allow changing of page sizes from us-letter to other sizes, such as A4, for Non-US folks
 
