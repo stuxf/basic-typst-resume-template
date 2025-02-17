@@ -70,10 +70,14 @@
   [= #(author)]
 
   // Personal Info Helper
-  let contact-item(value, prefix: "", link-type: "") = {
+  let contact-item(value, prefix: "", link-type: "", label: "") = {
     if value != "" {
       if link-type != "" {
-        link(link-type + value)[#(prefix + value)]
+        if label != "" {
+          link(link-type + value)[#(label)]  // supersedes the prefix
+        } else {
+          link(link-type + value)[#(prefix + value)]
+        }
       } else {
         value
       }
@@ -89,10 +93,10 @@
           contact-item(pronouns),
           contact-item(phone),
           contact-item(location),
-          contact-item(email, link-type: "mailto:"),
-          contact-item(github, link-type: "https://"),
-          contact-item(linkedin, link-type: "https://"),
-          contact-item(personal-site, link-type: "https://"),
+          contact-item(email, link-type: "mailto:", label: "Email"),
+          contact-item(github, link-type: "https://", label: "GitHub"),
+          contact-item(linkedin, link-type: "https://", label: "LinkedIn"),
+          contact-item(personal-site, link-type: "https://", label: "Personal Website"),
           contact-item(orcid, prefix: [#orcid-icon(color: rgb("#AECD54"))orcid.org/], link-type: "https://orcid.org/"),
         )
         items.filter(x => x != none).join("  |  ")
