@@ -1,3 +1,8 @@
+// In this fork, I have turned this resume template into a 2-column layout. The left column is for the section title and the right column is for the content. This is beneficial in three ways:
+// 1. Frees up vertical space by moving the section title to the left column.
+// 2. A typical bullet point ideally is not too long, and should be impactful with words. This layout enforces that.
+// 3. It makes the resume look more organized and easier to read.
+
 #import "@preview/scienceicons:0.0.6": orcid-icon
 
 #let resume(
@@ -43,8 +48,8 @@
 
   // Small caps for section titles
   show heading.where(level: 2): it => [
-    #pad(top: 0pt, bottom: -10pt, [#smallcaps(it.body)])
-    #line(length: 100%, stroke: 1pt)
+    #pad(top: 0pt, bottom: 0pt, it.body)
+    // #line(length: 100%, stroke: 1pt)
   ]
 
   // Accent Color Styling
@@ -133,7 +138,7 @@
   ]
 }
 
-// Cannot just use normal --- ligature becuase ligatures are disabled for good reasons
+// Cannot just use normal --- ligature because ligatures are disabled for good reasons
 #let dates-helper(
   start-date: "",
   end-date: "",
@@ -217,5 +222,16 @@
   generic-one-by-two(
     left: strong(activity),
     right: dates,
+  )
+}
+
+// Two-column layout for sections after Summary
+#let two-col-section(leftSide, rightSide) = {
+  line(length: 100%, stroke: 1pt)
+  grid(
+    columns: (2fr, 13fr),
+    column-gutter: 2em,
+    leftSide,
+    rightSide,
   )
 }
