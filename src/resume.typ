@@ -153,6 +153,7 @@
   )
 }
 
+// Use edu-constant to standardize the location and dates of education and work experience 
 #let edu-constant(
   institution: "",
   dates: "",
