@@ -3,10 +3,12 @@
 // 2. A typical bullet point ideally is not too long, and should be impactful with words. This layout enforces that.
 // 3. It makes the resume look more organized and easier to read.
 
+// TODO: Move the styling to the top of the file into the variables of resume.with() function.
 #import "@preview/scienceicons:0.0.6": orcid-icon
 
 #let resume(
   author: "",
+  title: "", 
   author-position: left,
   personal-info-position: left,
   pronouns: "",
@@ -65,13 +67,15 @@
     #set align(author-position)
     #set text(
       weight: 700,
-      size: 20pt,
+      size: 18pt,
     )
     #pad(it.body)
   ]
 
   // Level 1 Heading
   [= #(author)]
+
+  pad(bottom: -2pt, text(14pt, weight: "medium", [#title]))
 
   // Personal Info Helper
   let contact-item(value, prefix: "", link-type: "", label: "") = {
