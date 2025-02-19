@@ -18,8 +18,8 @@
   personal-site: "",
   orcid: "",
   accent-color: "#000000",
-  font: "New Computer Modern",
-  paper: "us-letter",
+  font: "Lato", //"New Computer Modern"
+  paper: "a4", // "us-letter"
   body,
 ) = {
 
@@ -38,13 +38,12 @@
 
   // Reccomended to have 0.5in margin on all sides
   set page(
-    margin: (0.5in),
+    margin: (y: 0.2in, x: 0.25in),
     paper: paper,
   )
 
   // Link styles
   show link: underline
-
 
   // Small caps for section titles
   show heading.where(level: 2): it => [
@@ -91,7 +90,7 @@
 
   // Personal Info
   pad(
-    top: 0.25em,
+    top: 0em,
     align(personal-info-position)[
       #{
         let items = (
@@ -154,11 +153,10 @@
   gpa: "",
   location: "",
 ) = {
-  generic-two-by-two(
-    top-left: strong(institution),
-    top-right: location,
-    bottom-left: emph(degree),
-    bottom-right: emph(dates),
+  generic-one-by-two(
+    left: [#strong(institution) / #degree], 
+    right: [#if gpa != "" [GPA: #gpa, ] #if dates != "" [#dates, ] #location]
+    // TODO: Change the styling of right-aligned text
   )
 }
 
@@ -168,11 +166,10 @@
   company: "",
   location: "",
 ) = {
-  generic-two-by-two(
-    top-left: strong(title),
-    top-right: dates,
-    bottom-left: company,
-    bottom-right: emph(location),
+  generic-one-by-two(
+    left: [#strong(company) / #title], 
+    right: [#dates, #location]
+    // TODO: Change the styling of right-aligned text
   )
 }
 
@@ -229,8 +226,8 @@
 #let two-col-section(leftSide, rightSide) = {
   line(length: 100%, stroke: 1pt)
   grid(
-    columns: (2fr, 13fr),
-    column-gutter: 2em,
+    columns: (2fr, 13.5fr),
+    column-gutter: 1em,
     leftSide,
     rightSide,
   )
