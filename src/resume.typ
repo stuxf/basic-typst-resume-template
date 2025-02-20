@@ -230,7 +230,7 @@
 #let two-col-section(leftSide, rightSide) = {
   line(length: 100%, stroke: 1pt)
   grid(
-    columns: (2fr, 13.5fr),
+    columns: (2fr, 16fr),
     column-gutter: 1em,
     leftSide,
     rightSide,
