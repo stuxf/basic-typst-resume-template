@@ -22,6 +22,10 @@
   accent-color: "#000000",
   font: "Lato", //"New Computer Modern"
   paper: "a4", // "us-letter"
+  author-font-size: 18pt,
+  title-font-size: 14pt,
+  margin-y: 0.2in,
+  margin-x: 0.25in,
   body,
 ) = {
 
@@ -40,7 +44,7 @@
 
   // Reccomended to have 0.5in margin on all sides
   set page(
-    margin: (y: 0.2in, x: 0.25in),
+    margin: (y: margin-y, x: margin-x),
     paper: paper,
   )
 
@@ -67,7 +71,7 @@
     #set align(author-position)
     #set text(
       weight: 700,
-      size: 18pt,
+      size: author-font-size,
     )
     #pad(it.body)
   ]
@@ -75,7 +79,7 @@
   // Level 1 Heading
   [= #(author)]
 
-  pad(bottom: -2pt, text(14pt, weight: "medium", [#title]))
+  pad(bottom: -2pt, text(title-font-size, weight: "medium", [#title]))
 
   // Personal Info Helper
   let contact-item(value, prefix: "", link-type: "", label: "") = {
@@ -235,4 +239,8 @@
     leftSide,
     rightSide,
   )
+}
+
+#let add-skill(left, right) = {
+  generic-one-by-two(left: left, right: text(fill: gray)[#emph(right)])
 }
