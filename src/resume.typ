@@ -1,7 +1,14 @@
+// In this fork, I have turned this resume template into a 2-column layout. The left column is for the section title and the right column is for the content. This is beneficial in three ways:
+// 1. Frees up vertical space by moving the section title to the left column.
+// 2. A typical bullet point ideally is not too long, and should be impactful with words. This layout enforces that.
+// 3. It makes the resume look more organized and easier to read.
+
+// TODO: Move the styling to the top of the file into the variables of resume.with() function.
 #import "@preview/scienceicons:0.0.6": orcid-icon
 
 #let resume(
   author: "",
+  title: "", 
   author-position: left,
   personal-info-position: left,
   pronouns: "",
@@ -13,8 +20,12 @@
   personal-site: "",
   orcid: "",
   accent-color: "#000000",
-  font: "New Computer Modern",
-  paper: "us-letter",
+  font: "Lato", //"New Computer Modern"
+  paper: "a4", // "us-letter"
+  author-font-size: 18pt,
+  title-font-size: 14pt,
+  margin-y: 0.2in,
+  margin-x: 0.25in,
   body,
 ) = {
 
@@ -33,18 +44,17 @@
 
   // Reccomended to have 0.5in margin on all sides
   set page(
-    margin: (0.5in),
+    margin: (y: margin-y, x: margin-x),
     paper: paper,
   )
 
   // Link styles
   show link: underline
 
-
   // Small caps for section titles
   show heading.where(level: 2): it => [
-    #pad(top: 0pt, bottom: -10pt, [#smallcaps(it.body)])
-    #line(length: 100%, stroke: 1pt)
+    #pad(top: 0pt, bottom: 0pt, it.body)
+    // #line(length: 100%, stroke: 1pt)
   ]
 
   // Accent Color Styling
@@ -61,7 +71,7 @@
     #set align(author-position)
     #set text(
       weight: 700,
-      size: 20pt,
+      size: author-font-size,
     )
     #pad(it.body)
   ]
@@ -69,11 +79,17 @@
   // Level 1 Heading
   [= #(author)]
 
+  pad(bottom: -2pt, text(title-font-size, weight: "medium", [#title]))
+
   // Personal Info Helper
-  let contact-item(value, prefix: "", link-type: "") = {
+  let contact-item(value, prefix: "", link-type: "", label: "") = {
     if value != "" {
       if link-type != "" {
-        link(link-type + value)[#(prefix + value)]
+        if label != "" {
+          link(link-type + value)[#(label)]  // supersedes the prefix
+        } else {
+          link(link-type + value)[#(prefix + value)]
+        }
       } else {
         value
       }
@@ -82,17 +98,17 @@
 
   // Personal Info
   pad(
-    top: 0.25em,
+    top: 0em,
     align(personal-info-position)[
       #{
         let items = (
           contact-item(pronouns),
           contact-item(phone),
           contact-item(location),
-          contact-item(email, link-type: "mailto:"),
-          contact-item(github, link-type: "https://"),
-          contact-item(linkedin, link-type: "https://"),
-          contact-item(personal-site, link-type: "https://"),
+          contact-item(email, link-type: "mailto:", label: "Email"),
+          contact-item(github, link-type: "https://", label: "GitHub"),
+          contact-item(linkedin, link-type: "https://", label: "LinkedIn"),
+          contact-item(personal-site, link-type: "https://", label: "Personal Website"),
           contact-item(orcid, prefix: [#orcid-icon(color: rgb("#AECD54"))orcid.org/], link-type: "https://orcid.org/"),
         )
         items.filter(x => x != none).join("  |  ")
@@ -129,7 +145,7 @@
   ]
 }
 
-// Cannot just use normal --- ligature becuase ligatures are disabled for good reasons
+// Cannot just use normal --- ligature because ligatures are disabled for good reasons
 #let dates-helper(
   start-date: "",
   end-date: "",
@@ -145,11 +161,10 @@
   gpa: "",
   location: "",
 ) = {
-  generic-two-by-two(
-    top-left: strong(institution),
-    top-right: location,
-    bottom-left: emph(degree),
-    bottom-right: emph(dates),
+  generic-one-by-two(
+    left: [#strong(institution) / #degree], 
+    right: [#if gpa != "" [GPA: #gpa, ] #if dates != "" [#dates, ] #location]
+    // TODO: Change the styling of right-aligned text
   )
 }
 
@@ -175,11 +190,10 @@
   company: "",
   location: "",
 ) = {
-  generic-two-by-two(
-    top-left: strong(title),
-    top-right: dates,
-    bottom-left: company,
-    bottom-right: emph(location),
+  generic-one-by-two(
+    left: [#strong(company) / #title], 
+    right: [#dates, #location]
+    // TODO: Change the styling of right-aligned text
   )
 }
 
@@ -230,4 +244,19 @@
     left: strong(activity),
     right: dates,
   )
+}
+
+// Two-column layout for sections after Summary
+#let two-col-section(leftSide, rightSide) = {
+  line(length: 100%, stroke: 1pt)
+  grid(
+    columns: (2fr, 16fr),
+    column-gutter: 1em,
+    leftSide,
+    rightSide,
+  )
+}
+
+#let add-skill(left, right) = {
+  generic-one-by-two(left: left, right: text(fill: gray)[#emph(right)])
 }
