@@ -153,6 +153,22 @@
   )
 }
 
+// Use edu-constant to standardize the location and dates of education and work experience 
+#let edu-constant(
+  institution: "",
+  dates: "",
+  degree: "",
+  gpa: "",
+  location: "",
+) = {
+  generic-two-by-two(
+    top-left: strong(institution),
+    top-right: dates,
+    bottom-left: emph(degree),
+    bottom-right: emph(location),
+  )
+}
+
 #let work(
   title: "",
   dates: "",
