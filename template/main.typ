@@ -31,7 +31,7 @@
 * Lines that start with == are formatted into section headings
 * You can use the specific formatting functions if needed
 * The following formatting functions are listed below
-* #edu(dates: "", degree: "", gpa: "", institution: "", location: "")
+* #edu(dates: "", degree: "", gpa: "", institution: "", location: "", consistent: false)
 * #work(company: "", dates: "", location: "", title: "")
 * #project(dates: "", name: "", role: "", url: "")
 * certificates(name: "", issuer: "", url: "", date: "")
@@ -47,6 +47,9 @@
   location: "Claremont, CA",
   dates: dates-helper(start-date: "Aug 2023", end-date: "May 2027"),
   degree: "Bachelor's of Science, Computer Science and Mathematics",
+
+  // Uncomment the line below if you want edu formatting to be consistent with everything else
+  // consistent: true
 )
 - Cumulative GPA: 4.0\/4.0 | Dean's List, Harvey S. Mudd Merit Scholarship, National Merit Scholarship
 - Relevant Coursework: Data Structures, Program Development, Microprocessors, Abstract Algebra I: Groups and Rings, Linear Algebra, Discrete Mathematics, Multivariable & Single Variable Calculus, Principles and Practice of Comp Sci
@@ -131,6 +134,7 @@
 //   // url: "",
 //   date: "Oct 2024",
 // )
+
 == Skills
 - *Programming Languages*: JavaScript, Python, C/C++, HTML/CSS, Java, Bash, R, Flutter, Dart
 - *Technologies*: React, Astro, Svelte, Tailwind CSS, Git, UNIX, Docker, Caddy, NGINX, Google Cloud Platform
