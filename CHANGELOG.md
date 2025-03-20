@@ -1,5 +1,9 @@
 # Basic Resume Changelog
 
+## [v0.2.4](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.4)
+
+Add option for consistent style of dates on upper right of components.
+
 ## [v0.2.3](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.3)
 
 User can set posistion of author and personal info.
