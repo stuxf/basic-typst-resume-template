@@ -1,4 +1,4 @@
-#import "@preview/scienceicons:0.0.6": orcid-icon
+#import "@preview/scienceicons:0.1.0": orcid-icon
 
 #let resume(
   author: "",

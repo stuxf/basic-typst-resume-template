@@ -1,5 +1,9 @@
 # Basic Resume Changelog
 
+## [v0.2.5](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.4)
+
+Bump scienceicon dep to fix #21
+
 ## [v0.2.4](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.4)
 
 Add option for consistent style of dates on upper right of components.
