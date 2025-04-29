@@ -1,6 +1,10 @@
 # Basic Resume Changelog
 
-## [v0.2.5](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.4)
+## [v0.2.6](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.6)
+
+Bump typst version to 0.13.0 and above
+
+## [v0.2.5](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.6)
 
 Bump scienceicon dep to fix #21
 
