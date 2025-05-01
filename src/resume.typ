@@ -15,6 +15,8 @@
   accent-color: "#000000",
   font: "New Computer Modern",
   paper: "us-letter",
+  author-font-size: 20pt
+  font-size: 10pt 
   body,
 ) = {
 
@@ -25,7 +27,7 @@
   set text(
     // LaTeX style font
     font: font,
-    size: 10pt,
+    size: font-size,
     lang: "en",
     // Disable ligatures so ATS systems do not get confused when parsing fonts.
     ligatures: false
@@ -61,7 +63,7 @@
     #set align(author-position)
     #set text(
       weight: 700,
-      size: 20pt,
+      size: author-font-size,
     )
     #pad(it.body)
   ]
