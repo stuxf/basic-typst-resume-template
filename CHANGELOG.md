@@ -1,5 +1,9 @@
 # Basic Resume Changelog
 
+## [v0.2.8](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.8)
+
+Add `font-size` and `author-font-size` configuration options
+
 ## [v0.2.7](hhttps://github.com/stuxf/basic-typst-resume-template/releases/tags/v0.2.7)
 
 Embarassing version bump

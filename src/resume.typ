@@ -16,7 +16,7 @@
   font: "New Computer Modern",
   paper: "us-letter",
   author-font-size: 20pt,
-  font-size: 10pt ,
+  font-size: 10pt,
   body,
 ) = {
 
