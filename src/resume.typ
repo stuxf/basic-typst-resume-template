@@ -4,6 +4,7 @@
   author: "",
   author-position: left,
   personal-info-position: left,
+  set_page:true,
   pronouns: "",
   location: "",
   email: "",
@@ -33,11 +34,14 @@
     ligatures: false
   )
 
-  // Reccomended to have 0.5in margin on all sides
-  set page(
-    margin: (0.5in),
-    paper: paper,
-  )
+  if set_page == true {
+    // Reccomended to have 0.5in margin on all sides
+    set page(
+      margin: (0.5in),
+      paper: paper,
+    )
+  }
+  
 
   // Link styles
   show link: underline
