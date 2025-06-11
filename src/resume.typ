@@ -194,15 +194,18 @@
 ) = {
   generic-one-by-two(
     left: {
+      if type(url) != content {
+        url = link("https://" + url)[#url]
+      }
       if role == "" {
-        [*#name* #if url != "" and dates != "" [ (#link("https://" + url)[#url])]]
+        [*#name* #if url != "" and dates != "" [#url]]
       } else {
-        [*#role*, #name #if url != "" and dates != ""  [ (#link("https://" + url)[#url])]]
+        [*#role*, #name #if url != "" and dates != ""  [#url]]
       }
     },
     right: {
       if dates == "" and url != "" {
-        link("https://" + url)[#url]
+        url
       } else {
         dates
       }
