@@ -161,9 +161,9 @@
     // original edu style (location top-right, dates bottom-right)
     generic-two-by-two(
       top-left: strong(institution),
-      top-right: location,
+      top-right: emph(location),
       bottom-left: emph(degree),
-      bottom-right: emph(dates),
+      bottom-right: dates,
     )
   }
 }
