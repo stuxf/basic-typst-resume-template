@@ -188,13 +188,14 @@
   name: "",
   url: "",
   dates: "",
+  stack: "",
 ) = {
   generic-one-by-two(
     left: {
       if role == "" {
-        [*#name* #if url != "" and dates != "" [ (#link("https://" + url)[#url])]]
+        [*#name* #if url != "" and dates != "" [ (#link("https://" + url)[#url])] #if stack != "" [ | _#stack _]]
       } else {
-        [*#role*, #name #if url != "" and dates != ""  [ (#link("https://" + url)[#url])]]
+        [*#role*, #name #if url != "" and dates != "" [ (#link("https://" + url)[#url])] #if stack != "" [ | _#stack _]]
       }
     },
     right: {
