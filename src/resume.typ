@@ -137,7 +137,7 @@
   start-date: "",
   end-date: "",
 ) = {
-  start-date + " " + $dash.em$ + " " + end-date
+  start-date + " " + sym.dash.em + " " + end-date
 }
 
 // Section components below
