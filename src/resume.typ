@@ -1,4 +1,5 @@
 #import "@preview/scienceicons:0.1.0": orcid-icon
+#import "@preview/lucide:0.1.0": *
 
 #let resume(
   author: "",
@@ -43,7 +44,6 @@
   // Link styles
   show link: underline
 
-
   // Small caps for section titles
   show heading.where(level: 2): it => [
     #pad(top: 0pt, bottom: -10pt, [#smallcaps(it.body)])
@@ -69,17 +69,26 @@
     #pad(it.body)
   ]
 
+  v(1fr)
+
   // Level 1 Heading
   [= #(author)]
 
   // Personal Info Helper
   let contact-item(value, prefix: "", link-type: "") = {
     if value != "" {
-      if link-type != "" {
-        link(link-type + value)[#(prefix + value)]
-      } else {
-        value
-      }
+      // Wrapping the grid in a box keeps it inline
+      box(grid(
+        columns: (auto, auto),
+        gutter: 0.4em,
+        align: horizon,
+        prefix,
+        if link-type != "" { 
+          link(link-type + value)[#value] 
+        } else { 
+          value 
+        }
+      ))
     }
   }
 
@@ -90,9 +99,9 @@
       #{
         let items = (
           contact-item(pronouns),
-          contact-item(phone),
-          contact-item(location),
-          contact-item(email, link-type: "mailto:"),
+          contact-item(email, prefix: [#lucide-icon("mail")], link-type: "mailto:"),
+          contact-item(phone, prefix: [#lucide-icon("phone")]),
+          contact-item(location, prefix: [#lucide-icon("map-pin")]),
           contact-item(github, link-type: "https://"),
           contact-item(linkedin, link-type: "https://"),
           contact-item(personal-site, link-type: "https://"),
@@ -107,6 +116,8 @@
   set par(justify: true)
 
   body
+
+  v(1fr)
 }
 
 // Generic two by two component for resume
@@ -140,11 +151,10 @@
   start-date + " " + $dash.em$ + " " + end-date
 }
 
-// Section components below
 #let edu(
-  institution: "",
   dates: "",
   degree: "",
+  institution: "",
   gpa: "",
   location: "",
   // Makes dates on upper right like rest of components
@@ -153,18 +163,18 @@
   if consistent {
     // edu-constant style (dates top-right, location bottom-right)
     generic-two-by-two(
-      top-left: strong(institution),
+      top-left: strong(degree),
       top-right: dates,
-      bottom-left: emph(degree),
+      bottom-left: institution,
       bottom-right: emph(location),
     )
   } else {
     // original edu style (location top-right, dates bottom-right)
     generic-two-by-two(
-      top-left: strong(institution),
-      top-right: location,
-      bottom-left: emph(degree),
-      bottom-right: emph(dates),
+      top-left: strong(degree),
+      top-right: dates,
+      bottom-left: institution,
+      bottom-right: emph(location),
     )
   }
 }
@@ -178,7 +188,7 @@
   generic-two-by-two(
     top-left: strong(title),
     top-right: dates,
-    bottom-left: company,
+    bottom-left: strong(company),
     bottom-right: emph(location),
   )
 }
