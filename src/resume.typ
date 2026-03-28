@@ -90,7 +90,7 @@
       #{
         let items = (
           contact-item(pronouns),
-          contact-item(phone),
+          contact-item(phone, link-type: "tel:"),
           contact-item(location),
           contact-item(email, link-type: "mailto:"),
           contact-item(github, link-type: "https://"),
