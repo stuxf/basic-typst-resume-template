@@ -46,8 +46,8 @@ A barebones resume looks like this, which you can use to get started.
 * Lines that start with == are formatted into section headings
 * You can use the specific formatting functions if needed
 * The following formatting functions are listed below
-* #edu(dates: "", degree: "", gpa: "", institution: "", location: "")
-* #work(company: "", dates: "", location: "", title: "")
+* #edu(dates: "", degree: "", gpa: "", institution: "", location: "", consistent: false)
+* #work(company: "", dates: "", location: "", title: "", url: "")
 * #project(dates: "", name: "", role: "", url: "")
 * #extracurriculars(activity: "", dates: "")
 * There are also the following generic functions that don't apply any formatting

@@ -178,12 +178,24 @@
   dates: "",
   company: "",
   location: "",
+  url: "",
 ) = {
   generic-two-by-two(
     top-left: strong(title),
     top-right: dates,
-    bottom-left: company,
-    bottom-right: emph(location),
+    bottom-left: {
+      company
+      if url != "" and location != "" {
+        [ (#link("https://" + url)[#url])]
+      }
+    },
+    bottom-right: {
+      if location == "" and url != "" {
+        link("https://" + url)[#url]
+      } else {
+        emph(location)
+      }
+    },
   )
 }
 

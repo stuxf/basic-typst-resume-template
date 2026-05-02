@@ -26,7 +26,7 @@
 * You can use the specific formatting functions if needed
 * The following formatting functions are listed below
 * #edu(dates: "", degree: "", gpa: "", institution: "", location: "")
-* #work(company: "", dates: "", location: "", title: "")
+* #work(company: "", dates: "", location: "", title: "", url: "")
 * #project(dates: "", name: "", role: "", url: "")
 * #extracurriculars(activity: "", dates: "")
 * There are also the following generic functions that don't apply any formatting
@@ -52,6 +52,7 @@
   location: "Atomville, CA",
   company: "Microscopic Circus, Schrodinger's University",
   dates: dates-helper(start-date: "May 2024", end-date: "Present"),
+  url: "example.com",
 )
 - Played God with tiny molecules, making them dance to uncover the secrets of the universe
 - Convinced high-performance computers to work overtime without unions, reducing simulation time by 50%
