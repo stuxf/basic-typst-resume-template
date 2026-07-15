@@ -1,4 +1,4 @@
-#import "@preview/scienceicons:0.1.0": orcid-icon
+#import "@preview/scienceicons:0.1.0": orcid-icon, email-icon, github-icon, linkedin-icon, website-icon, mastodon-icon, bluesky-icon
 
 #let resume(
   author: "",
@@ -9,6 +9,10 @@
   email: "",
   github: "",
   linkedin: "",
+  mastodon: "",
+  codeberg: "",
+  /// the dblp PID like "l/YannLeCun" or "92/1378-1".
+  dblp:"",
   phone: "",
   personal-site: "",
   orcid: "",
@@ -72,13 +76,43 @@
   // Level 1 Heading
   [= #(author)]
 
-  // Personal Info Helper
-  let contact-item(value, prefix: "", link-type: "") = {
+  /// add a collection of `prefixes` to `value`; if `value` already start with prefix, do nothing
+  let safe-prefix(prefixes, value) = {
+
+    // first remove all the prefixes from the value, until fail.
+    for prefix in prefixes {
+      let new_val = value.trim(prefix, at: start, repeat: false)
+      // terminate upon failure
+      if new_val == value { break }
+      value = new_val
+    }
+
+    // recover prefixes
+    prefixes.join("") + value
+
+  }
+
+  /// Personal Info Helper
+  let contact-item(
+    value, 
+    /// icon of the field
+    icon:[], 
+    /// prefix of the input text
+    text-prefix: "", 
+    /// type of the url, like `"mailto:"` or `https://`
+    link-type: "", 
+    /// the website of the link, like `orcid.org` or `github.com`
+    link-prefix: "") = {
     if value != "" {
+      // icon cannot be prefixed, because `safe-prefix` expect string, not content.
+      let text = icon + [~] + safe-prefix((text-prefix,), value)
+
       if link-type != "" {
-        link(link-type + value)[#(prefix + value)]
+        // the nested prefix with is essential
+        // if the user input `xxx`, `github.com/xxx`, or `https://github.com/xxx` will all link to the correct github account.
+        link(safe-prefix((link-prefix, link-type), value))[#text]
       } else {
-        value
+        text
       }
     }
   }
@@ -92,11 +126,14 @@
           contact-item(pronouns),
           contact-item(phone, link-type: "tel:"),
           contact-item(location),
-          contact-item(email, link-type: "mailto:"),
-          contact-item(github, link-type: "https://"),
-          contact-item(linkedin, link-type: "https://"),
-          contact-item(personal-site, link-type: "https://"),
-          contact-item(orcid, prefix: [#orcid-icon(color: rgb("#AECD54"))orcid.org/], link-type: "https://orcid.org/"),
+          contact-item(email, icon: [#email-icon()], link-type: "mailto:"),
+          contact-item(github, icon: [#github-icon()], link-type: "https://", link-prefix: "github.com/"),
+          contact-item(linkedin, icon: [#linkedin-icon(color: rgb("#0072b1"))], link-type: "https://", link-prefix: "linkedin.com/"),
+          contact-item(mastodon, icon: [#mastodon-icon(color: rgb("#6364ff"))], link-type: "https://"),
+          contact-item(dblp, text-prefix: "dblp.org/pid", link-type: "https://", link-prefix: "dblp.org/pid/"),
+          contact-item(codeberg, link-type: "https://", text-prefix: "codeberg.com/", link-prefix: "codeberg.com"),
+          contact-item(personal-site, icon: [#website-icon()], link-type: "https://"),
+          contact-item(orcid, icon: [#orcid-icon(color: rgb("#AECD54"))], link-type: "https://", link-prefix: "orcid.org/"),
         )
         items.filter(x => x != none).join("  |  ")
       }
