@@ -27,3 +27,11 @@ exclude = [
 path = "template"
 entrypoint = "main.typ"
 thumbnail = "thumbnail.png"
+
+[tool.tytanic]
+tests = "tests"
+
+[tool.tytanic.default]
+ppi = 144.0
+max-delta = 1
+max-deviations = 0

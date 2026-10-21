@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Build the package and smoke-test it with the selected Typst compiler."""
+
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    compiler = os.environ.get("TYPST", "typst")
+    manifest = tomllib.loads((ROOT / "typst.toml").read_text(encoding="utf-8"))
+    package, template = manifest["package"], manifest["template"]
+    spec = f'@preview/{package["name"]}:{package["version"]}'
+    output = ROOT / "tests/out/package"
+    output.mkdir(parents=True, exist_ok=True)
+    subprocess.run([compiler, "--version"], check=True)
+
+    with tempfile.TemporaryDirectory(prefix="typst-package-check-") as temporary:
+        temporary = Path(temporary)
+        packages = temporary / "packages"
+        subprocess.run([str(ROOT / "scripts/package"), str(packages / "preview")], check=True)
+        bundle = packages / "preview" / package["name"] / package["version"]
+        project = temporary / "project"
+        shutil.copytree(bundle / template["path"], project)
+        entrypoint = project / template["entrypoint"]
+        if f'"{spec}"' not in entrypoint.read_text(encoding="utf-8"):
+            raise ValueError(f"starter template must import {spec}")
+
+        # The default template does not use the bundled ORCID asset.
+        orcid = project / "orcid-check.typ"
+        orcid.write_text(
+            f'#import "{spec}": resume\n'
+            '#show: resume.with(author: "Package Check", orcid: "0000-0002-1825-0097")\n',
+            encoding="utf-8",
+        )
+        for name, source in (("template", entrypoint), ("orcid", orcid)):
+            result = subprocess.run(
+                [compiler, "compile", "--root", str(project), "--package-path", str(packages),
+                 "--package-cache-path", str(temporary / "cache"), "--ignore-system-fonts",
+                 "--diagnostic-format", "short", str(source), str(output / f"{name}.pdf")],
+                capture_output=True, text=True,
+            )
+            (output / f"{name}.log").write_text(result.stderr, encoding="utf-8")
+            if result.returncode or re.search(r"(?:^|\s)warning:", result.stderr):
+                raise ValueError(f"packaged {name} failed (warnings are errors):\n{result.stderr}")
+            print(f"Packaged {name}: passed")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
+        sys.exit(f"Package check failed: {error}")

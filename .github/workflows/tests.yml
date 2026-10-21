@@ -4,64 +4,68 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    # Check new stable Typst releases even when the package has not changed.
+    - cron: "23 16 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   tests:
+    name: Typst ${{ matrix.typst-version }}
     strategy:
+      fail-fast: false
       matrix:
-        # add any other Typst versions that your package should support
-        typst-version: ["0.13"]
-        # the docs don't need to build with all versions supported by the package;
-        # the latest one is enough
-        include:
-          - typst-version: "0.13"
-            doc: 1
+        typst-version: ["0.13.0", "latest"]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Probe runner package cache
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: imagemagick cargo
-          version: 1.0
-
-      - name: Install oxipng from crates.io
-        uses: baptiste0928/cargo-install@v3
-        with:
-          crate: oxipng
-
-      - name: Install just from crates.io
-        uses: baptiste0928/cargo-install@v3
-        with:
-          crate: just
-
-      - name: Install typst-test from github
-        uses: baptiste0928/cargo-install@v3
-        with:
-          crate: typst-test
-          git: https://github.com/tingerrr/typst-test.git
-          tag: ci-semi-stable
+        uses: actions/checkout@v7
 
       - name: Setup typst
-        uses: typst-community/setup-typst@v3
+        uses: typst-community/setup-typst@v5
         with:
           typst-version: ${{ matrix.typst-version }}
 
-      - name: Run test suite
-        run: just test
+      - name: Check packaged template compatibility without warnings
+        run: ./scripts/check
 
-      - name: Archive diffs
-        uses: actions/upload-artifact@v4
+      - name: Archive packaged template and diagnostics
+        uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: diffs
+          name: compatibility-${{ matrix.typst-version }}
+          path: tests/out/
+          retention-days: 5
+
+  visual:
+    name: Visual regressions (Tytanic 0.4.1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Tytanic embeds Typst 0.15.1. Keep it fixed so compiler changes do not
+      # silently alter the renderer used to compare committed references.
+      - name: Setup Tytanic
+        uses: typst-community/setup-tytanic@v1.1.0
+        with:
+          tytanic-version: "0.4.1"
+
+      - name: Compare visual references
+        run: tt run --warnings promote --no-fail-fast
+
+      - name: Archive visual test results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: visual-tytanic-0.4.1
           path: |
             tests/**/diff/*.png
             tests/**/out/*.png
+            tests/**/ref/*.png
           retention-days: 5
-
-      - name: Build docs
-        if: ${{ matrix.doc }}
-        run: just doc

@@ -6,6 +6,9 @@
 - Use a text symbol for the date separator to support PDF/UA accessibility.
 - Allow `dates-helper` to display only the end date when the start date is omitted.
 - Remove the `scienceicons` dependency and bundle the official CC0 ORCID icon directly, eliminating its Typst 0.15 warnings.
+- Check the minimum supported and latest stable Typst versions on pull requests, pushes, and weekly scheduled runs. Treat compiler warnings as failures.
+- Add Tytanic coverage for ORCID rendering, optional fields, and resume configuration, and check the packaged starter template with the minimum and latest Typst compilers.
+- Replace the archived `typst-test` runner with Tytanic 0.4.1 for visual regression tests. Refresh the reference images for its Typst 0.15.1 renderer.
 - Make repeated packaging predictable, use the manifest's exclusions, and check the isolated packaged template before release.
 
 ## [v0.2.9](https://github.com/stuxf/basic-typst-resume-template/releases/tag/v0.2.9)
