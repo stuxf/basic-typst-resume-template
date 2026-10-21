@@ -6,17 +6,21 @@ version = "0.2.9"
 entrypoint = "src/lib.typ"
 authors = ["Stephen Xu <https://stuxf.dev>"]
 license = "Unlicense"
+compiler = "0.13.0"
 description = "A simple, standard resume, designed to work well with ATS."
 repository = "https://github.com/stuxf/basic-typst-resume-template"
 keywords = ["cv", "resume", "ATS"]
 categories = ["cv"]
 exclude = [
-	".github",
-	"docs",
-	"scripts",
-	"tests",
-	".typstignore",
-	"Justfile",
+	"/.github/",
+	"/docs/",
+	"/scripts/",
+	"/tests/",
+	"/Justfile",
+	"/out/",
+	"/dist/",
+	"/example-resume.pdf",
+	"/example-resume.png",
 ]
 
 [template]

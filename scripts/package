@@ -1,86 +1,137 @@
-#!/usr/bin/env bash
-set -eu
+#!/usr/bin/env python3
+"""Build a package from the working tree using typst.toml's exclusion rules."""
 
-# adapted from https://github.com/johannes-wolf/cetz/blob/35c0868378cea5ad323cc0d9c2f76de8ed9ba5bd/scripts/package
-# licensed under Apache License 2.0
+from __future__ import annotations
 
-. "$(dirname "${BASH_SOURCE[0]}")/setup"
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import tomllib
 
-if (( $# < 1 )) || [[ "${1:-}" == "help" ]]; then
-  echo "package TARGET"
-  echo ""
-  echo "Packages all relevant files into a directory named '<name>/<version>'"
-  echo "at TARGET. If TARGET is set to @local or @preview, the local Typst package"
-  echo "directory will be used so that the package gets installed for local use."
-  echo "The name and version are read from 'typst.toml' in the project root."
-  echo ""
-  echo "Local package prefix: $DATA_DIR/typst/package/local"
-  echo "Local preview package prefix: $DATA_DIR/typst/package/preview"
-  exit 1
-fi
 
-TARGET="$(resolve-target "${1:?Missing target path, @local or @preview}")"
-echo "Install dir: $TARGET"
+ROOT = Path(__file__).resolve().parent.parent
 
-# ignore rules
-readarray -t ignores < <(grep -v '^#' .typstignore | grep '[^[:blank:]]')
 
-# recursively print all files that are not excluded via .typstignore
-function enumerate {
-	local root="$1"
-	if [[ -f "$root" ]]; then
-		echo "$root"
-	else
-		local files
-		readarray -t files < <(find "$root" \
-      -mindepth 1 -maxdepth 1 \
-      -not -name .git \
-      -not -name .typstignore)
-		# declare -p files >&2
+def resolve_target(value: str) -> Path:
+    if value not in ("@local", "@preview"):
+        return Path(value).resolve()
+    if sys.platform == "darwin":
+        data = Path.home() / "Library/Application Support"
+    elif sys.platform == "win32":
+        data = Path(os.environ["APPDATA"])
+    else:
+        data = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
+    return (data / "typst/packages" / value[1:]).resolve()
 
-		local f
-		for f in "${files[@]}"; do
-			local include
-			include=1
 
-			local ignore
-			for ignore in "${ignores[@]}"; do
-				if [[ "$ignore" =~ ^! ]]; then
-					ignore="${ignore:1}"
-					if [[ "$f" == ./$ignore ]]; then
-						# echo "\"$f\" matched \"!$ignore\"" >&2
-						include=1
-					fi
-				elif [[ "$f" == ./$ignore ]]; then
-					# echo "\"$f\" matched \"$ignore\"" >&2
-					include=0
-				fi
-			done
-			if [[ "$include" == 1 ]]; then
-				enumerate "$f"
-			fi
-		done
-	fi
-}
+def build(target: str) -> None:
+    with (ROOT / "typst.toml").open("rb") as source:
+        package = tomllib.load(source)["package"]
+    name, version = package["name"], package["version"]
+    if not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", name):
+        raise ValueError("invalid package name in typst.toml")
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
+        raise ValueError("invalid package version in typst.toml")
+    rules = package.get("exclude", [])
+    if not isinstance(rules, list) or any(not isinstance(rule, str) for rule in rules):
+        raise ValueError("package.exclude must be an array of strings")
 
-# List of all files that get packaged
-readarray -t files < <(enumerate ".")
-# declare -p files >&2
+    base = resolve_target(target)
+    destination = base / name / version
+    if (base / name).is_symlink() or destination.is_symlink():
+        raise ValueError("the package namespace and destination must not be symlinks")
+    destination = destination.resolve()
+    if ROOT.is_relative_to(destination):
+        raise ValueError("the package destination must not contain the source tree")
+    if destination.exists() and not destination.is_dir():
+        raise ValueError("the package destination must be a directory, not a file or symlink")
 
-TMP="$(mktemp -d)"
+    with tempfile.TemporaryDirectory(prefix="typst-package-list-") as temporary:
+        temporary = Path(temporary)
+        repository = temporary / "git"
+        subprocess.run(["git", "init", "--quiet", "--bare", str(repository)], check=True)
+        excludes = repository / "info/exclude"
+        excludes.write_text("\n".join(rules) + "\n", encoding="utf-8")
+        if base.is_relative_to(ROOT):
+            if base == ROOT:
+                raise ValueError("use an excluded output directory such as out, not the source root")
+            # Check an actual directory path against the manifest rules, without
+            # consulting source .gitignore files or interpolating a new glob.
+            probe = temporary / "ignore-check"
+            probe.mkdir()
+            ignored = subprocess.run(
+                ["git", "--git-dir=" + str(repository), "--work-tree=" + str(probe),
+                 "-c", "core.excludesFile=/dev/null", "check-ignore", "--no-index", "--quiet",
+                 "--", base.relative_to(ROOT).as_posix() + "/"],
+                capture_output=True,
+            )
+            if ignored.returncode == 1:
+                raise ValueError("in-tree output directories must be excluded by package.exclude; use out or an external directory")
+            if ignored.returncode:
+                raise subprocess.CalledProcessError(ignored.returncode, ignored.args, stderr=ignored.stderr)
+        # A private empty repository treats every source file as untracked. This
+        # includes local changes and new files while using Git's ignore semantics,
+        # independent of the checkout's index, .gitignore, or global excludes.
+        result = subprocess.run(
+            ["git", "--git-dir=" + str(repository), "--work-tree=" + str(ROOT),
+             "-c", "core.excludesFile=/dev/null", "ls-files", "--others", "-z",
+             "--exclude-from=" + str(excludes)],
+            check=True, capture_output=True,
+        )
+        files = sorted(Path(os.fsdecode(path)) for path in result.stdout.split(b"\0") if path)
 
-for f in "${files[@]}"; do
-  mkdir -p "$TMP/$(dirname "$f")" 2>/dev/null
-  cp -r "$ROOT/$f" "$TMP/$f"
-done
+    required = (Path("typst.toml"), Path(package["entrypoint"]), Path("README.md"), Path("LICENSE"))
+    for path in required:
+        if path not in files:
+            raise ValueError(f"required package file is missing or excluded: {path}")
 
-TARGET="${TARGET:?}/${PKG_PREFIX:?}/${VERSION:?}"
-echo "Packaged to: $TARGET"
-if rm -r "${TARGET:?}" 2>/dev/null; then
-  echo "Overwriting existing version."
-fi
-mkdir -p "$TARGET"
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f".{version}-", dir=destination.parent) as temporary:
+        temporary = Path(temporary)
+        staged = temporary / "package"
+        staged.mkdir()
+        for path in files:
+            source = ROOT / path
+            if source.is_symlink():
+                raise ValueError(f"package files must not be symlinks: {path}")
+            copied = staged / path
+            copied.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, copied)
 
-# include hidden files by setting dotglob
-shopt -s dotglob
-mv "$TMP"/* "$TARGET"
+        previous = temporary / "previous"
+        if destination.exists():
+            destination.rename(previous)
+        try:
+            staged.rename(destination)
+        except OSError:
+            if previous.exists():
+                previous.rename(destination)
+            raise
+    print(f"Packaged {len(files)} files to {destination}")
+
+
+def main() -> int:
+    if len(sys.argv) == 2 and sys.argv[1] in ("help", "--help", "-h"):
+        print("Usage: scripts/package TARGET\n"
+              "Build <name>/<version> at TARGET, @local, or @preview.\n"
+              "Files are read from the working tree using typst.toml's exclude rules.\n"
+              "In-tree targets must be excluded by package.exclude (for example, out).\n"
+              "Requires Python 3.11+ and Git.")
+        return 0
+    if len(sys.argv) != 2:
+        print("Usage: scripts/package TARGET", file=sys.stderr)
+        return 2
+    try:
+        build(sys.argv[1])
+    except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
+        print(f"Packaging failed: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

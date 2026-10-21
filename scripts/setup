@@ -1,4 +1,6 @@
-# source this script to prepare some common environment variables
+# shellcheck shell=bash
+# shellcheck disable=SC2034
+# Source this script to prepare variables consumed by the calling script.
 
 # adapted from https://github.com/johannes-wolf/cetz/blob/35c0868378cea5ad323cc0d9c2f76de8ed9ba5bd/scripts/package
 # licensed under Apache License 2.0
@@ -15,12 +17,16 @@ fi
 function read-toml() {
   local file="$1"
   local key="$2"
-  # Read a key value pair in the format: <key> = "<value>"
-  # stripping surrounding quotes.
-  perl -lne "print \"\$1\" if /^${key}\\s*=\\s*\"(.*)\"/" < "$file"
+  python3 - "$file" "$key" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as source:
+    print(tomllib.load(source)["package"][sys.argv[2]])
+PY
 }
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd -P)/.." # macOS has no realpath
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/.." # macOS has no realpath
 PKG_PREFIX="$(read-toml "$ROOT/typst.toml" "name")"
 VERSION="$(read-toml "$ROOT/typst.toml" "version")"
 
