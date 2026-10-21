@@ -10,7 +10,7 @@ It validates the package, tags HEAD as v<version>, pushes that tag to origin,
 and opens the Typst Universe submission PR using your existing Git/gh login.
 An existing matching tag or open submission PR is reused on retries.
 
---dry-run prints the plan without changing files or contacting GitHub.
+--dry-run prints the plan and proposed PR body without writes or network access.
 Requires Python 3.11+, Git, GitHub CLI (gh), Typst, and Tytanic 0.4.1 (tt).
 HELP
 }
@@ -32,12 +32,51 @@ tag="v$VERSION"
 branch="$PKG_PREFIX-$VERSION"
 package_path="packages/preview/$PKG_PREFIX/$VERSION"
 
+pr_body() {
+  python3 - "$ROOT" "$VERSION" <<'PY'
+from pathlib import Path
+import re
+import sys
+import tomllib
+
+root, version = Path(sys.argv[1]), sys.argv[2]
+package = tomllib.loads((root / "typst.toml").read_text(encoding="utf-8"))["package"]
+notes = re.search(rf"(?ms)^## \[v{re.escape(version)}\][^\n]*\n(.*?)(?=^## |\Z)",
+                  (root / "CHANGELOG.md").read_text(encoding="utf-8"))
+if not notes or not notes.group(1).strip():
+    sys.exit(f"Add release notes for {version} to CHANGELOG.md before publishing.")
+license_box = "x" if package["license"] == "Unlicense" else " "
+print(f"""I am submitting
+- [ ] a new package
+- [x] an update for a package
+
+Description: {package['description']}
+
+Changes in {version}:
+{notes.group(1).strip()}
+
+Source: {package['repository']}/tree/v{version}
+
+Local validation:
+- Tytanic visual tests: `tt run --warnings promote --no-fail-fast`.
+- Packaged starter and ORCID compilation: `./scripts/check` (warnings fail).
+
+- [{license_box}] ensured that my package is licensed such that users can use and distribute the contents of its template directory without restriction, after modifying them through normal use.
+  Template files remain covered by the root LICENSE ({package['license']}).
+""")
+if (root / "src/assets/orcid.svg").is_file():
+    print("ORCID artwork: [official CC0 source](https://orcid.figshare.com/articles/figure/ORCID_iD_icon_graphics/5008697/4); provenance is included in `src/assets/orcid.svg`.")
+PY
+}
+
 if "$dry_run"; then
   printf 'After the release changes are committed, this will:\n'
   printf '  Run Tytanic and packaged compatibility checks.\n'
   printf '  Create/reuse %s at HEAD and push it to origin.\n' "$tag"
   printf '  Submit %s to %s from %s:%s.\n' "$package_path" "$upstream" "${fork%%/*}" "$branch"
-  printf 'No changes made. The package version must not already be published.\n'
+  printf 'No changes made. The package version must not already be published.\n\n'
+  printf 'Proposed PR body (local checks run during publishing):\n\n'
+  pr_body
   exit 0
 fi
 
@@ -57,6 +96,7 @@ tt run --warnings promote --no-fail-fast
 
 temporary="$(mktemp -d)"
 trap 'rm -rf "$temporary"' EXIT
+pr_body > "$temporary/pr-body.md"
 ./scripts/package "$temporary/package"
 gh repo clone "$fork" "$temporary/registry" -- --depth=1 --filter=blob:none --sparse
 git -C "$temporary/registry" sparse-checkout set "packages/preview/$PKG_PREFIX"
@@ -91,8 +131,6 @@ pr="$(gh pr list --repo "$upstream" --head "$branch" --json url,headRepositoryOw
 if [[ -n "$pr" ]]; then
   printf '%s\n' "$pr"
 else
-  printf 'Publish %s:%s.\n\nSource: %s/tree/%s\n' \
-    "$PKG_PREFIX" "$VERSION" "$(read-toml "$ROOT/typst.toml" repository)" "$tag" > "$temporary/pr-body.md"
   gh pr create --repo "$upstream" --base main --head "${fork%%/*}:$branch" \
     --title "$PKG_PREFIX:$VERSION" --body-file "$temporary/pr-body.md"
 fi

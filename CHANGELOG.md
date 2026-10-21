@@ -1,6 +1,6 @@
 # Basic Resume Changelog
 
-## Unreleased
+## [v0.2.10](https://github.com/stuxf/basic-typst-resume-template/releases/tag/v0.2.10)
 
 - Make phone numbers clickable with `tel:` links.
 - Use a text symbol for the date separator to support PDF/UA accessibility.
@@ -11,6 +11,7 @@
 - Replace the archived `typst-test` runner with Tytanic 0.4.1 for visual regression tests. Refresh the reference images for its Typst 0.15.1 renderer.
 - Make repeated packaging predictable, use the manifest's exclusions, and check the isolated packaged template before release.
 - Prepare registry submissions locally; tagged CI runs validate and upload the package without a registry credential.
+- Refresh the package thumbnail to match the initialized starter template.
 
 ## [v0.2.9](https://github.com/stuxf/basic-typst-resume-template/releases/tag/v0.2.9)
 
