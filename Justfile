@@ -22,6 +22,10 @@ update *args:
 package target:
   ./scripts/package "{{target}}"
 
+# tag the committed release and submit it to Typst Universe using local Git/gh login
+publish *args:
+  ./scripts/publish {{args}}
+
 # install the library with the "@local" prefix
 install: (package "@local")
 

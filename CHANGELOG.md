@@ -10,6 +10,7 @@
 - Add Tytanic coverage for ORCID rendering, optional fields, and resume configuration, and check the packaged starter template with the minimum and latest Typst compilers.
 - Replace the archived `typst-test` runner with Tytanic 0.4.1 for visual regression tests. Refresh the reference images for its Typst 0.15.1 renderer.
 - Make repeated packaging predictable, use the manifest's exclusions, and check the isolated packaged template before release.
+- Prepare registry submissions locally; tagged CI runs validate and upload the package without a registry credential.
 
 ## [v0.2.9](https://github.com/stuxf/basic-typst-resume-template/releases/tag/v0.2.9)
 

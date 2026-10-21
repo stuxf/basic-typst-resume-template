@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'HELP'
+Usage: scripts/publish [--dry-run]
+
+After updating the version/imports and committing the release, run this locally.
+It validates the package, tags HEAD as v<version>, pushes that tag to origin,
+and opens the Typst Universe submission PR using your existing Git/gh login.
+An existing matching tag or open submission PR is reused on retries.
+
+--dry-run prints the plan without changing files or contacting GitHub.
+Requires Python 3.11+, Git, GitHub CLI (gh), Typst, and Tytanic 0.4.1 (tt).
+HELP
+}
+
+if (( $# > 1 )); then usage >&2; exit 2; fi
+case "${1:-}" in
+  -h|--help) usage; exit 0 ;;
+  --dry-run) dry_run=true ;;
+  "") dry_run=false ;;
+  *) usage >&2; exit 2 ;;
+esac
+
+# shellcheck source=scripts/setup
+. "$(dirname "${BASH_SOURCE[0]}")/setup"
+cd "$ROOT"
+fork="stuxf/typst-packages"
+upstream="typst/packages"
+tag="v$VERSION"
+branch="$PKG_PREFIX-$VERSION"
+package_path="packages/preview/$PKG_PREFIX/$VERSION"
+
+if "$dry_run"; then
+  printf 'After the release changes are committed, this will:\n'
+  printf '  Run Tytanic and packaged compatibility checks.\n'
+  printf '  Create/reuse %s at HEAD and push it to origin.\n' "$tag"
+  printf '  Submit %s to %s from %s:%s.\n' "$package_path" "$upstream" "${fork%%/*}" "$branch"
+  printf 'No changes made. The package version must not already be published.\n'
+  exit 0
+fi
+
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo 'Commit the release changes before publishing; the working tree must be clean.' >&2
+  exit 1
+fi
+existing_tag="$(git rev-parse --quiet --verify "refs/tags/$tag^{commit}" || true)"
+if [[ -n "$existing_tag" && "$existing_tag" != "$(git rev-parse HEAD)" ]]; then
+  printf '%s already points to another commit; update the package version.\n' "$tag" >&2
+  exit 1
+fi
+gh auth status
+git var GIT_AUTHOR_IDENT >/dev/null
+tt run --warnings promote --no-fail-fast
+./scripts/check
+
+temporary="$(mktemp -d)"
+trap 'rm -rf "$temporary"' EXIT
+./scripts/package "$temporary/package"
+gh repo clone "$fork" "$temporary/registry" -- --depth=1 --filter=blob:none --sparse
+git -C "$temporary/registry" sparse-checkout set "packages/preview/$PKG_PREFIX"
+git -C "$temporary/registry" fetch --depth=1 "https://github.com/$upstream.git" main
+upstream_head="$(git -C "$temporary/registry" rev-parse FETCH_HEAD)"
+if git -C "$temporary/registry" cat-file -e "$upstream_head:$package_path" 2>/dev/null; then
+  printf '%s is already published; update the package version.\n' "$PKG_PREFIX:$VERSION" >&2
+  exit 1
+fi
+
+# Resume an interrupted submission, or start from the current upstream tree.
+if [[ -n "$(git -C "$temporary/registry" ls-remote --heads origin "refs/heads/$branch")" ]]; then
+  git -C "$temporary/registry" fetch --depth=1 origin "$branch"
+  git -C "$temporary/registry" switch -c "$branch" FETCH_HEAD
+else
+  git -C "$temporary/registry" switch -c "$branch" "$upstream_head"
+fi
+destination="$temporary/registry/$package_path"
+rm -rf "$destination"
+mkdir -p "$(dirname "$destination")"
+cp -R "$temporary/package/$PKG_PREFIX/$VERSION" "$destination"
+git -C "$temporary/registry" add -- "$package_path"
+if ! git -C "$temporary/registry" diff --cached --quiet; then
+  git -C "$temporary/registry" commit -m "$PKG_PREFIX:$VERSION"
+fi
+
+if [[ -z "$existing_tag" ]]; then git tag -a "$tag" -m "$PKG_PREFIX $VERSION"; fi
+git push origin "refs/tags/$tag"
+git -C "$temporary/registry" push -u origin "$branch"
+pr="$(gh pr list --repo "$upstream" --head "$branch" --json url,headRepositoryOwner \
+  --jq "map(select(.headRepositoryOwner.login == \"${fork%%/*}\"))[0].url // empty")"
+if [[ -n "$pr" ]]; then
+  printf '%s\n' "$pr"
+else
+  printf 'Publish %s:%s.\n\nSource: %s/tree/%s\n' \
+    "$PKG_PREFIX" "$VERSION" "$(read-toml "$ROOT/typst.toml" repository)" "$tag" > "$temporary/pr-body.md"
+  gh pr create --repo "$upstream" --base main --head "${fork%%/*}:$branch" \
+    --title "$PKG_PREFIX:$VERSION" --body-file "$temporary/pr-body.md"
+fi
